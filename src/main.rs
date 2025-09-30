@@ -1,38 +1,18 @@
-use async_graphql::{EmptyMutation, EmptySubscription, Object, Schema, SimpleObject};
+mod models;
+mod resolvers;
+mod schema;
+
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{
     Router,
     routing::{get, post},
 };
+use schema::build_schema;
 use std::net::SocketAddr;
-
-struct QueryRoot;
-
-#[Object]
-impl QueryRoot {
-    async fn hello(&self) -> &str {
-        "Hello, world!"
-    }
-    async fn testing(&self) -> &str {
-        "Testing"
-    }
-    async fn user(&self, id: i32) -> User {
-        User {
-            id,
-            name: String::from("Zeph"),
-        }
-    }
-}
-
-#[derive(SimpleObject)]
-struct User {
-    id: i32,
-    name: String,
-}
 
 #[tokio::main]
 async fn main() {
-    let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription).finish();
+    let schema = build_schema();
 
     let app = Router::new()
         .route(
