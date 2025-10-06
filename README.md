@@ -17,7 +17,7 @@ Anyone can build on it: dashboards, analytics tools, or public displays that bri
 to life.
 
 Certain data domains (e.g. weather, utilities, public safety) are writable only by
-**authorized city devicese**, ensuring authenticity to maintain the City Portal's integrity. 
+**authorized city devices**, ensuring authenticity to maintain the City Portal's integrity. 
 
 Beyond data aggregation, City Portal aims to become a **platform for experimentation**.
 Students, researchers, artists, and engineers can collaborate through the same interface to:
