@@ -3,8 +3,11 @@ name = "city_portal"
 version = "0.1.0"
 edition = "2024"
 
-[dependencies]
+[workspace.dependencies]
 tokio = { version = "1", features = ["full"] }
 axum = "0.8"
 async-graphql = "7"
 async-graphql-axum = "7"
+
+[dependencies]
+gateway = { path = "services/gateway" }
