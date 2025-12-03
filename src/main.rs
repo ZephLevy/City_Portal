@@ -1,6 +1,8 @@
+use async_graphql::http::GraphiQLSource;
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{
     Router,
+    response::Html,
     routing::{get, post},
 };
 use std::net::SocketAddr;
@@ -29,6 +31,10 @@ async fn main() -> anyhow::Result<()> {
                 let schema = schema.clone();
                 move || async move { axum::Json(schema.sdl()) }
             }),
+        )
+        .route(
+            "/graphiql",
+            get(Html(GraphiQLSource::build().endpoint("/graphql").finish())),
         );
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
