@@ -3,13 +3,27 @@ services:
     image: docker.io/library/postgres:alpine
     container_name: postgres
     env_file:
-      - .env
+      - backend/.env
     ports:
       - "5432:5432"
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:Z
       - postgres_data:/var/lib/postgresql/data:Z
     restart: unless-stopped
+
+  frontend:
+    image: oven/bun:latest
+    container_name: frontend
+    working_dir: /app
+    command: bun run dev --host
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app:Z
+    # env_file:
+      # - frontend/.env
+    restart: unless-stopped
+
 
 volumes:
   postgres_data:

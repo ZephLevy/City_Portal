@@ -41,3 +41,7 @@ The main mission of City Portal is to be a framework for **digital citizenship**
 where information is treated as a shared resource and every resident, developer, or policymaker
 can take part in shaping the city’s future.
 
+## Run locally
+Use `docker compose` or `podman compose` at the project root. Then, `cd` into `backend/` and
+type `cargo run`. Cargo is not currently part of the compose as it has to recompile everything every time,
+which is a massive pain.
