@@ -15,6 +15,6 @@ CREATE TABLE records (
     id          SERIAL PRIMARY KEY,
     dataset_id  INTEGER NOT NULL REFERENCES datasets(id),
     location_id INTEGER REFERENCES locations(id),
-    timestamp   TIMESTAMPTZ NOT NULL,
+    timestamp   TIMESTAMPTZ NOT NULL DEFAULT now(),
     data        JSONB
 );

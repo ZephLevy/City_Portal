@@ -1,14 +1,14 @@
-use crate::resolvers::QueryRoot;
-use async_graphql::{EmptyMutation, EmptySubscription, Schema};
+use crate::resolvers::{MutationRoot, QueryRoot};
+use async_graphql::{EmptySubscription, Schema};
 use sqlx::{PgPool, postgres::PgPoolOptions};
 use std::{env, time::Duration};
 use tokio::time::timeout;
 
-pub type AppSchema = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
+pub type AppSchema = Schema<QueryRoot, MutationRoot, EmptySubscription>;
 
 pub async fn build_schema() -> anyhow::Result<AppSchema> {
     let pool = create_pool().await?;
-    Ok(Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
+    Ok(Schema::build(QueryRoot, MutationRoot, EmptySubscription)
         .data(pool)
         .finish())
 }

@@ -18,7 +18,7 @@ impl QueryRoot {
             .fetch_all(pool)
             .await?;
 
-        return Ok(rows.into_iter().map(|r| Dataset::from(r)).collect());
+        Ok(rows.into_iter().map(Dataset::from).collect())
     }
 
     pub async fn query_dataset(
@@ -54,5 +54,79 @@ impl QueryRoot {
         .await?;
 
         Ok(row.into())
+    }
+}
+
+pub struct MutationRoot;
+
+#[Object]
+impl MutationRoot {
+    pub async fn create_dataset(
+        &self,
+        ctx: &Context<'_>,
+        name: String,
+        description: Option<String>,
+    ) -> anyhow::Result<i32> {
+        let pool = get_pg_pool(ctx);
+
+        let id: i32 = sqlx::query_scalar(
+            r#"INSERT INTO datasets (name, description)
+            VALUES ($1, $2)
+            RETURNING id;"#,
+        )
+        .bind(name)
+        .bind(description)
+        .fetch_one(pool)
+        .await?;
+
+        Ok(id)
+    }
+
+    pub async fn create_location(
+        &self,
+        ctx: &Context<'_>,
+        name: String,
+        lat: f64,
+        lon: f64,
+    ) -> anyhow::Result<i32> {
+        let pool = get_pg_pool(ctx);
+
+        let id: i32 = sqlx::query_scalar(
+            r#"INSERT INTO locations (name, lat, lon)
+            VALUES ($1, $2)
+            RETURNING id;"#,
+        )
+        .bind(name)
+        .bind(lat)
+        .bind(lon)
+        .fetch_one(pool)
+        .await?;
+
+        Ok(id)
+    }
+
+    pub async fn record_into_dataset(
+        &self,
+        ctx: &Context<'_>,
+        dataset_id: i32,
+        location_id: Option<i32>,
+        data: serde_json::Value,
+    ) -> anyhow::Result<Record> {
+        let pool = get_pg_pool(ctx);
+
+        let row: RecordRow = sqlx::query_as(
+            r#"
+                INSERT INTO records (dataset_id, location_id, data)
+                VALUES ($1, $2, $3)
+                RETURNING *;
+            "#,
+        )
+        .bind(dataset_id)
+        .bind(location_id)
+        .bind(data)
+        .fetch_one(pool)
+        .await?;
+
+        Ok(Record::from(row))
     }
 }
