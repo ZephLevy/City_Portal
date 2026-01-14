@@ -23,7 +23,10 @@ export async function list_datasets(): Promise<Dataset[]> {
       }
     }
   `;
+  return (await query_graphql<{datasets: Dataset[]}>(query)).datasets;
+}
 
+async function query_graphql<T>(query: string): Promise<T> {
   const response = await fetch('http://host.containers.internal:3000/graphql', {
     method: 'POST',
     headers: {
@@ -36,14 +39,11 @@ export async function list_datasets(): Promise<Dataset[]> {
     throw new Error(`Error - status ${response.status}`);
   }
 
-  const result = await response.json() as GraphQLResponse<{
-    datasets: Dataset[];
-  }>;
+  const result = await response.json() as GraphQLResponse<T>;
 
   if (result.errors) {
     throw new Error(result.errors.map(e => e.message).join(', '));
   }
 
-  return result.data!.datasets;
-}
-
+  return result.data!;
+} 
